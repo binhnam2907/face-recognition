@@ -40,14 +40,12 @@ def alignment_procedure(img, left_eye, right_eye, nose):
         point_3rd = (left_eye_x, right_eye_y)
         direction = 1 #rotate inverse direction of clock
 
-    #-----------------------
     #find length of triangle edges
 
     a = findEuclideanDistance(np.array(left_eye), np.array(point_3rd))
     b = findEuclideanDistance(np.array(right_eye), np.array(point_3rd))
     c = findEuclideanDistance(np.array(right_eye), np.array(left_eye))
 
-    #-----------------------
 
     #apply cosine rule
 
@@ -63,7 +61,6 @@ def alignment_procedure(img, left_eye, right_eye, nose):
         angle = np.arccos(cos_a) #angle in radian
         angle = (angle * 180) / math.pi #radian to degree
 
-        #-----------------------
         #rotate base image
 
         if direction == -1:
@@ -72,7 +69,6 @@ def alignment_procedure(img, left_eye, right_eye, nose):
         img = Image.fromarray(img)
         img = np.array(img.rotate(direction * angle))
 
-    #-----------------------
 
     return img #return img anyway
 

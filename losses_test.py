@@ -1,16 +1,21 @@
 import tensorflow as tf
 import numpy as np
 
-def arcface_loss(embeddings_anchor, embeddings_positive, angular_margin = 0.5):
-    embeddings_anchor = tf.nn.l2_normalize(embeddings_anchor, axis=-1)
-    embeddings_positive = tf.nn.l2_normalize(embeddings_positive, axis=-1)
-    similarity = tf.reduce_sum(tf.multiply(embeddings_anchor, embeddings_positive), axis=-1)
+def arcface_loss(feature1, feature2, margin=0.5, scale=64):
+    feature1_norm = feature1 / np.linalg.norm(feature1)
+    feature2_norm = feature2 / np.linalg.norm(feature2)
+    similarity = np.dot(feature1_norm, feature2_norm.T)
+    theta = np.arccos(similarity)
+    target = np.cos(theta + margin)
+    logits = scale * target
+    loss = -np.log(np.exp(logits) / (np.exp(logits) + np.exp(-logits)))
 
-    theta = tf.acos(similarity)
-    target_similarity = tf.cos(theta + angular_margin)
-    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=target_similarity, logits=similarity))
+    return loss
 
-    return np.abs(loss.numpy())
+if __name__ == '__main__':
+    feature1 = np.random.randn(1, 512)
+    feature2 = np.random.randn(1, 512)
 
-
+    loss = arcface_loss(feature1, feature2)
+    print(loss)
 
